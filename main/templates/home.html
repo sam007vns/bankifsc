@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block meta %}
+<title>{% if bank %}{{bank}} IFSC, MICR Codes, Phone, Address, Contact Details{% else %}Find IFSC, MICR Codes, Phone, Address, All Bank Branches in India, Contact Details{% endif %}</title>
+    <meta charset="utf-8">
+    <meta name="description" content="{% if bank %}Get {{bank}} IFSC Code, MICR Code, Phone, Address, Contact Details{% else %}Get All Bank Branches IFSC, MICR Codes, Phone, Address, Contact Details, present in India{% endif %}">
+    <meta name="keywords" content="{% if bank %}{{bank}} IFSC Code{% else %}IFSC Code{% endif %},{% if bank %}{{bank}} MICR Code{% else %}MICR Code{% endif %},{% if bank %}{{bank}} Phone Number{% else %}Bank Phone Number{% endif %},{% if bank %}{{bank}} Address{% else %}Bank Address{% endif%},{% if bank %}{{bank}} Contact Details{% else %}Bank Contact Details{% endif %}">
+    <meta name='date' content='{% if bank_details %}{{bank_details.date}}{% else %}Jul. 24, 2020{% endif %}'>
+    <meta name="author" content="AnotherView"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% endblock meta %}
+{% block style %}
+.box{
+width:auto;
+}
+
+.card{
+	margin:20px;
+  padding:20px;
+  background-color: #f2f2f2 !important;
+}
+.card-body{
+	display:inline-block;
+}
+.footer{
+  position:relative;
+   bottom:0;
+   width:100%;
+   height:60px;   /* Height of the footer */
+}
+.loc_img{
+  display:block;
+
+}
+{% endblock %}
+{% block nav %}
+<nav class="navbar navbar-expand-lg navbar-dark primary-color sticky-top">
+
+  <!-- Navbar brand -->
+  <a class="navbar-brand" href="{% url 'home' %}">Bank Codes</a>
+
+  <!-- Collapse button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+    aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!-- Collapsible content -->
+  <div class="collapse navbar-collapse" id="basicExampleNav">
+
+    <!-- Links -->
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="http://192.168.43.237:8000/contact">About Us</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="http://192.168.43.237:8000/contact">Contact US</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="http://192.168.43.237:8000/privacy">Privacy Policy</a>
+      </li>
+      <!-- Dropdown -->
+    </ul>
+    <!-- Links -->
+  </div>
+  <!-- Collapsible content -->
+
+</nav>
+{% endblock nav %}
+
+{% block content %}
+<center> <h3>IFSC, MIRC Codes, Address, Phone, All Bank Branches in India</h3> </center>
+<hr width="50%">
+<div class="box">
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active"><a href="{% url 'home' %}">Home</a></li>
+{% if process2 or process3 or process4 or process5 %}<li class="breadcrumb-item active"><a href="{% url 'select_bank_' bankurl %}">{{bank}}</a></li>{% endif %}
+{% if process3 or process4 or process5  %}<li class="breadcrumb-item active">                                <a href="{% url 'select_state_' bankurl stateurl %}">{{state}}</a></li>{% endif %}
+{% if process4 or process5 %}<li class="breadcrumb-item active">                                             <a href="{% url 'select_city_' bankurl stateurl cityurl %}">{{city}}</a></li>{% endif %}
+{% if process5 %}<li class="breadcrumb-item">                                                                <a href="{% url 'branch_' bankurl stateurl cityurl branchurl %}">{{branch}}</a></li>{% endif %}
+
+  </ol>
+</nav>
+</div>
+
+                                {% for msg in messages %}
+
+                                <div class="alert alert-{{msg.level_tag}}" role="alert">
+                                    {{msg.message}}
+                                </div>
+
+                                 {% endfor %}
+<div class="card">
+<form action="/" name="bank">
+  <div class="form-group">
+    <label for="bnk">Bank</label>
+    <select name="SelectURL" onchange="location.href=bank.SelectURL.options[selectedIndex].value" class="form-control">
+      <option value="" selected="selected">Select Bank Name</option>
+      {% if process1 == True %}
+      {% for bank_name in Bank %}
+      <option value="/{{bank_name.bankurl}}">{{bank_name.name}}</option>
+      {% endfor %}
+      {% else %}
+      <option value="" selected="selected">{{bank}}</option>
+      {% endif %}
+    </select>
+  </div>
+</form>
+<form action="/" name="state">
+  <div class="form-group">
+    <label for="">State</label>
+    <select name="SelectURL" onchange="location.href=state.SelectURL.options[selectedIndex].value" class="form-control">
+    {% if process2 == True %}
+    <option value="">State</option>
+    {% for state_name in state %}
+<option value="/{{bankurl}}/{{state_name.stateurl}}">{{state_name.adr4}}</option>
+    {% endfor %}
+    {% elif process1 == True %}
+    <option value="" selected="selected">Select State</option>
+    {% else %}
+    <option value="" selected="selected">{{state}}</option>
+    {% endif %}
+  </select>
+
+  </div>
+
+</form>
+<form action="/" name="city">
+  <div class="form-group">
+    <label for="">City</label>
+    <select name="SelectURL" onchange="location.href=city.SelectURL.options[selectedIndex].value" class="form-control">
+
+    {% if process3 == True %}
+    <option value="">City</option>
+    {% for city_name in city %}
+<option value="/{{bankurl}}/{{stateurl}}/{{city_name.cityurl}}">{{city_name.adr3}}</option>
+    {% endfor %}
+    {% elif process1 == True %}
+    <option value="" selected="selected">Select City</option>
+    {% else %}
+    <option value="" selected="selected">{{city}}</option>
+    {% endif %}
+  </select>
+
+  </div>
+
+</form>
+<form action="/" name="branch">
+  <div class="form-group">
+    <label for="">Branch</label>
+    <select name="SelectURL" onchange="location.href=branch.SelectURL.options[selectedIndex].value" class="form-control">
+    {% if process4 == True %}
+    <option value="">Branch</option>
+    {% for branch_name in branch %}
+<option value="/{{bankurl}}/{{stateurl}}/{{cityurl}}/{{branch_name.branchurl}}">{{branch_name.adr1}}</option>
+    {% endfor %}
+    {% elif process1 == True %}
+    <option value="" selected="selected">Select Branch</option>
+    {% else %}
+    <option value="" selected="selected">{{branch}}</option>
+    {% endif %}
+  </select>
+
+  </div>
+
+</form>
+<div class="form-group">
+<a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm">Clear Above Data</a>
+</div>
+</div>
+{% if process5 == True %}
+<div class="card">
+  <h3>IFSC: {{bank_details.ifsc}}</h3>
+<ul class="list-group list-group-flush">
+  <li class="list-group-item">MIRC: {{bank_details.micr}}</li>
+  <li class="list-group-item">IFSC:  {{bank_details.ifsc}}</li>
+  <li class="list-group-item">BRANCH: {{bank_details.adr1}}</li>
+  <li class="list-group-item">BANK: {{bank_details.name}}</li>
+  <li class="list-group-item">CITY: {{bank_details.adr2}}</li>
+  <li class="list-group-item">DISTRICT: {{bank_details.adr3}}</li>
+  <li class="list-group-item">STATE: {{bank_details.adr4}}</li>
+  <li class="list-group-item">CONTACT: {{bank_details.contact}}</li>
+  <li class="list-group-item">ADDRESS: {{bank_details.adr5}}</li>
+
+
+</ul>
+  </div>
+  {% endif %}
+{% endblock content %}
+
+{% block footer %}
+<div class="footer">
+  <div class="card-footer footer-light bg-light">
+    Copyright AnotherView || All Rights Reserverd.
+  </div>
+</div>
+
+{% endblock footer %}
